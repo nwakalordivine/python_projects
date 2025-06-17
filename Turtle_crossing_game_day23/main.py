@@ -9,35 +9,31 @@ screen.setup(width=600, height=600)
 screen.tracer(0)
 player = Player()
 scoreboard = Scoreboard()
-
+car_manager = CarManager()
 screen.listen()
 
 screen.onkey(player.move, "Up")
-cars = []
+
 game_is_on = True
 while game_is_on:
-    car_manager = CarManager()
-    time.sleep(car_manager.more_speed)
+    time.sleep(0.1)
     screen.update()
 
     # create multiple cars
-    cars.append(car_manager)
-    for all_cars in cars:
-        all_cars.forward(20)
+    car_manager.create_new_car()
+    car_manager.move()
 
-        # detect collision with car
-        x_dist = abs(player.xcor() - all_cars.xcor())
-        y_dist = abs(player.ycor() - all_cars.ycor())
-        if all_cars.distance(player) < 20:
+    # detect collision with car
+    for car in car_manager.segments:
+        if car.distance(player) < 20:
             scoreboard.game_over_text()
             game_is_on = False
-
-    car_manager.move()
 
     # detects if the player successful pass through the cards
     if player.ycor() > 280:
         player.reset()
         car_manager.new_level()
+        scoreboard.score += 1
         scoreboard.update()
 
 
